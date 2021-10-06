@@ -1,38 +1,40 @@
 const sqlKeyWords = ["insert", "select", "update", "delete"];
 
-function encode(url) {
+// 문자열에 SQL 키워드가 있으면 해당 키워드를 `prefix + base64(키워드) + suffix` 형태로 인코딩한다.
+function encode(str) {
     for (const keyWord of sqlKeyWords) {
         while (true) {
-            const keyWordStartOf = url.search(new RegExp(keyWord, "i"));
-            if (keyWordStartOf != - 1) { // 해당 문자열에 키워드가 있는 경우
+            const keyWordStart = str.search(new RegExp(keyWord, "i"));
+            if (keyWordStart != - 1) { // 해당 문자열에 키워드가 있는 경우
                 const keyWordLength = keyWord.length;
-                url = replaceToBase64(url, keyWordLength, keyWordStartOf);
+                str = replaceToBase64(str, keyWordLength, keyWordStart);
             } else {
                 break
             }
         }
     }
-    return url;
+    return str;
 }
 
 const prefix = "(==>";
 const suffix = "<==)";
 
-function replaceToBase64(url, keyWordLength, keyWordStartOf) {
-    return url.substr(0, keyWordStartOf) + prefix + btoa(url.substr(keyWordStartOf, keyWordLength)) + suffix + url.substr(keyWordStartOf + keyWordLength);
+function replaceToBase64(str, keyWordLength, keyWordStart) {
+    return str.substr(0, keyWordStart) + prefix + btoa(str.substr(keyWordStart, keyWordLength)) + suffix + str.substr(keyWordStart + keyWordLength);
 }
 
-function decode(url) {
-    while(url.includes(prefix) || url.includes(suffix)) {
-        const prefixEnd = url.indexOf(prefix) + prefix.length;
-        const suffixStart = url.indexOf(suffix);
-        const encodeKeyWord = url.substr(prefixEnd, suffixStart - prefixEnd) 
+// 위 encode() 함수로 인코딩된 문자열을 디코딩한다.
+function decode(str) {
+    while(str.includes(prefix) || str.includes(suffix)) {
+        const prefixEnd = str.indexOf(prefix) + prefix.length;
+        const suffixStart = str.indexOf(suffix);
+        const encodeKeyWord = str.substr(prefixEnd, suffixStart - prefixEnd)
 
-        url = url.replace(encodeKeyWord, atob(encodeKeyWord));
-        url = url.replace(prefix, "");
-        url = url.replace(suffix, "");
+        str = str.replace(encodeKeyWord, atob(encodeKeyWord));
+        str = str.replace(prefix, "");
+        str = str.replace(suffix, "");
     }
-    return url;
+    return str;
 }
 
 export default { encode, decode }

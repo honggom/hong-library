@@ -1,9 +1,9 @@
-import UrlEncoder from "./parser.js";
+import SqlKeyWordEncoder from "./parser.js";
 
 var givenStr = "naver.com/delete/aaaa/Insert/gggg/Update/update/SelEct";
 
-var encodedUrl = UrlEncoder.encode(givenStr);
-var decodedUrl = UrlEncoder.decode(encodedUrl);
+var encodedUrl = SqlKeyWordEncoder.encode(givenStr);
+var decodedUrl = SqlKeyWordEncoder.decode(encodedUrl);
 
 console.log(encodedUrl);
 console.log(decodedUrl);
